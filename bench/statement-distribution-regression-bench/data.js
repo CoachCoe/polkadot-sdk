@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1734952860890,
+  "lastUpdate": 1735307130999,
   "repoUrl": "https://github.com/paritytech/polkadot-sdk",
   "entries": {
     "statement-distribution-regression-bench": [
@@ -26483,6 +26483,50 @@ window.BENCHMARK_DATA = {
           {
             "name": "test-environment",
             "value": 0.04441966039799995,
+            "unit": "seconds"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "git@kchr.de",
+            "name": "Bastian Köcher",
+            "username": "bkchr"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b7afe48ed0bfef30836e7ca6359c2d8bb594d16e",
+          "message": "paras-registrar: Improve error reporting (#6989)\n\nThis pr improves the error reporting by paras registrar when an owner\nwants to access a locked parachain.\n\nCloses: https://github.com/paritytech/polkadot-sdk/issues/6745\n\n---------\n\nCo-authored-by: command-bot <>",
+          "timestamp": "2024-12-27T12:43:13Z",
+          "tree_id": "ed3000dec480402eb64af67532fc96699207cf68",
+          "url": "https://github.com/paritytech/polkadot-sdk/commit/b7afe48ed0bfef30836e7ca6359c2d8bb594d16e"
+        },
+        "date": 1735307113734,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Received from peers",
+            "value": 106.39999999999996,
+            "unit": "KiB"
+          },
+          {
+            "name": "Sent to peers",
+            "value": 127.95199999999997,
+            "unit": "KiB"
+          },
+          {
+            "name": "statement-distribution",
+            "value": 0.035125030352,
+            "unit": "seconds"
+          },
+          {
+            "name": "test-environment",
+            "value": 0.044703614135999985,
             "unit": "seconds"
           }
         ]
