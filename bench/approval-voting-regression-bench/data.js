@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1734952836110,
+  "lastUpdate": 1735307105972,
   "repoUrl": "https://github.com/paritytech/polkadot-sdk",
   "entries": {
     "approval-voting-regression-bench": [
@@ -51730,6 +51730,105 @@ window.BENCHMARK_DATA = {
           {
             "name": "approval-distribution",
             "value": 0.00001908702,
+            "unit": "seconds"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "git@kchr.de",
+            "name": "Bastian Köcher",
+            "username": "bkchr"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b7afe48ed0bfef30836e7ca6359c2d8bb594d16e",
+          "message": "paras-registrar: Improve error reporting (#6989)\n\nThis pr improves the error reporting by paras registrar when an owner\nwants to access a locked parachain.\n\nCloses: https://github.com/paritytech/polkadot-sdk/issues/6745\n\n---------\n\nCo-authored-by: command-bot <>",
+          "timestamp": "2024-12-27T12:43:13Z",
+          "tree_id": "ed3000dec480402eb64af67532fc96699207cf68",
+          "url": "https://github.com/paritytech/polkadot-sdk/commit/b7afe48ed0bfef30836e7ca6359c2d8bb594d16e"
+        },
+        "date": 1735307088794,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Received from peers",
+            "value": 52940.59999999999,
+            "unit": "KiB"
+          },
+          {
+            "name": "Sent to peers",
+            "value": 63630.81,
+            "unit": "KiB"
+          },
+          {
+            "name": "approval-voting-parallel/approval-voting-parallel-subsystem",
+            "value": 0.4755411564699828,
+            "unit": "seconds"
+          },
+          {
+            "name": "approval-distribution",
+            "value": 0.000018277429999999998,
+            "unit": "seconds"
+          },
+          {
+            "name": "approval-voting",
+            "value": 0.0000184401,
+            "unit": "seconds"
+          },
+          {
+            "name": "approval-voting-parallel/approval-voting-parallel-0",
+            "value": 2.4797630276100002,
+            "unit": "seconds"
+          },
+          {
+            "name": "approval-voting-parallel/approval-voting-parallel-3",
+            "value": 2.4794397531800003,
+            "unit": "seconds"
+          },
+          {
+            "name": "approval-voting-parallel/approval-voting-parallel-db",
+            "value": 2.1619210230799926,
+            "unit": "seconds"
+          },
+          {
+            "name": "approval-voting-parallel/approval-voting-gather-signatures",
+            "value": 0.005622867409999999,
+            "unit": "seconds"
+          },
+          {
+            "name": "test-environment",
+            "value": 3.3764089187722996,
+            "unit": "seconds"
+          },
+          {
+            "name": "approval-distribution/test-environment",
+            "value": 0.000018277429999999998,
+            "unit": "seconds"
+          },
+          {
+            "name": "approval-voting-parallel",
+            "value": 12.579767222279974,
+            "unit": "seconds"
+          },
+          {
+            "name": "approval-voting/test-environment",
+            "value": 0.0000184401,
+            "unit": "seconds"
+          },
+          {
+            "name": "approval-voting-parallel/approval-voting-parallel-1",
+            "value": 2.46993675419,
+            "unit": "seconds"
+          },
+          {
+            "name": "approval-voting-parallel/approval-voting-parallel-2",
+            "value": 2.50754264034,
             "unit": "seconds"
           }
         ]
