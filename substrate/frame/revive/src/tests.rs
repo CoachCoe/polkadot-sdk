@@ -4845,7 +4845,7 @@ fn tracing_works() {
 		let result = builder::bare_call(addr).data((3u32, addr_callee).encode()).build();
 		println!("{}", serde_json::to_string_pretty(&result.traces).unwrap());
 
-		let traces = result.traces.map(|_| Weight::default());
+		let traces = result.traces.map(|_| Weight::default(), |res| res);
 
 		assert_eq!(
 			traces,

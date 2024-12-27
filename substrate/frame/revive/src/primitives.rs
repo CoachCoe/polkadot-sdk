@@ -126,7 +126,18 @@ pub enum ContractAccessError {
 }
 
 /// Output of a contract call or instantiation which ran to completion.
-#[derive(Clone, PartialEq, Eq, Encode, Decode, RuntimeDebug, TypeInfo, Default)]
+#[derive(
+	Clone,
+	PartialEq,
+	Eq,
+	serde::Serialize,
+	serde::Deserialize,
+	Encode,
+	Decode,
+	RuntimeDebug,
+	TypeInfo,
+	Default,
+)]
 pub struct ExecReturnValue {
 	/// Flags passed along by `seal_return`. Empty when `seal_return` was never called.
 	pub flags: ReturnFlags,

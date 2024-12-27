@@ -1,5 +1,5 @@
 #![allow(missing_docs)]
-use crate::Weight;
+use crate::{ExecReturnValue, Weight};
 use alloc::vec::Vec;
 use codec::{Decode, Encode};
 use scale_info::TypeInfo;
@@ -27,28 +27,43 @@ pub enum CallType {
 /// The traces of a transaction.
 #[derive(TypeInfo, Encode, Decode, Serialize, Deserialize, Clone, Debug, Eq, PartialEq)]
 #[serde(untagged)]
-pub enum Traces<Gas = Weight> {
-	CallTraces(Vec<CallTrace<Gas>>),
+pub enum Traces<Gas = Weight, Output = ExecReturnValue>
+where
+	Output: Default + PartialEq,
+{
+	CallTraces(Vec<CallTrace<Gas, Output>>),
 }
 
-impl<Gas> Traces<Gas> {
+impl<Gas, Output: Default + PartialEq> Traces<Gas, Output> {
 	/// Return mapped traces with the given gas mapper.
-	pub fn map<F, T>(self, gas_mapper: F) -> Traces<T>
+	pub fn map<T, V>(
+		self,
+		gas_mapper: impl Fn(Gas) -> T + Copy,
+		output_mapper: impl Fn(Output) -> V + Copy,
+	) -> Traces<T, V>
 	where
-		F: Fn(Gas) -> T + Copy,
+		V: Default + PartialEq,
 	{
 		match self {
-			Traces::CallTraces(traces) =>
-				Traces::CallTraces(traces.into_iter().map(|trace| trace.map(gas_mapper)).collect()),
+			Traces::CallTraces(traces) => Traces::CallTraces(
+				traces.into_iter().map(|trace| trace.map(gas_mapper, output_mapper)).collect(),
+			),
 		}
 	}
+}
+
+pub fn is_default<T: Default + PartialEq>(value: &T) -> bool {
+	*value == T::default()
 }
 
 /// A smart contract execution call trace.
 #[derive(
 	TypeInfo, Default, Encode, Decode, Serialize, Deserialize, Clone, Debug, Eq, PartialEq,
 )]
-pub struct CallTrace<Gas = Weight> {
+pub struct CallTrace<Gas = Weight, Output = ExecReturnValue>
+where
+	Output: Default + PartialEq,
+{
 	/// Address of the sender.
 	pub from: H160,
 	/// Address of the receiver.
@@ -61,25 +76,34 @@ pub struct CallTrace<Gas = Weight> {
 	/// Type of call.
 	#[serde(rename = "type")]
 	pub call_type: CallType,
-	/// Gas limit.
+	/// Amount of gas provided for the call.
 	pub gas: Gas,
 	/// Amount of gas used.
 	#[serde(rename = "gasUsed")]
 	pub gas_used: Gas,
 	///  Return data.
-	#[serde(skip_serializing_if = "Vec::is_empty")]
-	pub output: Vec<u8>,
-	/// Amount of gas provided for the call.
+	#[serde(flatten, skip_serializing_if = "is_default")]
+	pub output: Output,
+	#[serde(skip_serializing_if = "Option::is_none")]
+	pub error: Option<String>,
+	// TODO: add revertReason
 	/// List of sub-calls.
 	#[serde(skip_serializing_if = "Vec::is_empty")]
-	pub calls: Vec<CallTrace<Gas>>,
+	pub calls: Vec<CallTrace<Gas, Output>>,
 }
 
-impl<Gas> CallTrace<Gas> {
+impl<Gas, Output> CallTrace<Gas, Output>
+where
+	Output: Default + PartialEq,
+{
 	/// Return a new call gas with a mapped gas value.
-	pub fn map<F, T>(self, gas_mapper: F) -> CallTrace<T>
+	pub fn map<T, V>(
+		self,
+		gas_mapper: impl Fn(Gas) -> T + Copy,
+		output_mapper: impl Fn(Output) -> V + Copy,
+	) -> CallTrace<T, V>
 	where
-		F: Fn(Gas) -> T + Copy,
+		V: Default + PartialEq,
 	{
 		CallTrace {
 			from: self.from,
@@ -87,10 +111,11 @@ impl<Gas> CallTrace<Gas> {
 			input: self.input,
 			value: self.value,
 			call_type: self.call_type,
+			error: self.error,
 			gas: gas_mapper(self.gas),
 			gas_used: gas_mapper(self.gas_used),
-			output: self.output,
-			calls: self.calls.into_iter().map(|call| call.map(gas_mapper)).collect(),
+			output: output_mapper(self.output),
+			calls: self.calls.into_iter().map(|call| call.map(gas_mapper, output_mapper)).collect(),
 		}
 	}
 }

@@ -7,7 +7,7 @@ import {
 	polkadotSdkPath,
 } from './util.ts'
 import { afterAll, afterEach, describe, expect, test } from 'bun:test'
-import { encodeFunctionData, Hex, parseEther } from 'viem'
+import { encodeAbiParameters, encodeFunctionData, Hex, parseEther } from 'viem'
 import { ErrorTesterAbi } from '../abi/ErrorTester'
 import { TracingCallerAbi } from '../abi/TracingCaller.ts'
 import { TracingCalleeAbi } from '../abi/TracingCallee.ts'
@@ -371,23 +371,39 @@ for (const env of envs) {
 			})()
 
 			console.error('Caller address:', callerAddress)
-			const txHash = await (async () => {
-				const { request } = await env.serverWallet.simulateContract({
-					address: callerAddress,
-					abi: TracingCallerAbi,
-					functionName: 'start',
-					args: [2n],
-				})
+			//const txHash = await (async () => {
+			//	const { request } = await env.serverWallet.simulateContract({
+			//		address: callerAddress,
+			//		abi: TracingCallerAbi,
+			//		functionName: 'start',
+			//		args: [2n],
+			//	})
+			//
+			//	const hash = await env.serverWallet.writeContract(request)
+			//	await env.serverWallet.waitForTransactionReceipt({ hash })
+			//
+			//
+			//	return hash
+			//})()
 
-				const hash = await env.serverWallet.writeContract(request)
-				await env.serverWallet.waitForTransactionReceipt({ hash })
+			let data = encodeFunctionData({
+				abi: TracingCallerAbi,
+				functionName: 'start',
+				args: [2n],
+			})
 
-				return hash
-			})()
+			const res = await env.debugClient.traceCall({
+				account: env.accountWallet.account,
+				data,
+				to: callerAddress,
+			})
 
-			console.error('Transaction hash:', txHash)
-			const res = await env.debugClient.traceTransaction(txHash)
 			console.error(res)
+			Bun.write('/tmp/tracing.json', JSON.stringify(res, null, 2))
+			//console.error('Transaction hash:', txHash)
+			//const res = await env.debugClient.traceTransaction(txHash)
+			//// serialize the result to
+			//console.error(res)
 		})
 	})
 }

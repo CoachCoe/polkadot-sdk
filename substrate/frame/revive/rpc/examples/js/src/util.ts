@@ -1,7 +1,16 @@
 import { spawnSync } from 'bun'
 import { resolve } from 'path'
 import { readFileSync } from 'fs'
-import { createClient, createWalletClient, defineChain, type Hex, http, publicActions } from 'viem'
+import {
+	CallParameters,
+	createClient,
+	createWalletClient,
+	defineChain,
+	formatTransactionRequest,
+	type Hex,
+	http,
+	publicActions,
+} from 'viem'
 import { privateKeyToAccount, nonceManager } from 'viem/accounts'
 
 export function getByteCode(name: string, evm: boolean = false): Hex {
@@ -85,6 +94,7 @@ export async function createEnv(name: 'geth' | 'kitchensink') {
 		chain,
 	}).extend(publicActions)
 
+	const tracerConfig = { withLog: true }
 	const debugClient = createClient({
 		chain,
 		transport,
@@ -92,7 +102,17 @@ export async function createEnv(name: 'geth' | 'kitchensink') {
 		async traceTransaction(txHash: Hex) {
 			return client.request({
 				method: 'debug_traceTransaction' as any,
-				params: [txHash, { tracer: 'callTracer' } as any],
+				params: [txHash, { tracer: 'callTracer', tracerConfig } as any],
+			})
+		},
+		async traceCall(args: CallParameters) {
+			return client.request({
+				method: 'debug_traceCall' as any,
+				params: [
+					formatTransactionRequest(args),
+					'latest',
+					{ tracer: 'callTracer', tracerConfig } as any,
+				],
 			})
 		},
 		// ...

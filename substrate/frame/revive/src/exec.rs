@@ -1105,7 +1105,14 @@ where
 
 			let output = T::Debug::intercept_call(&contract_address, entry_point, &input_data)
 				.unwrap_or_else(|| executable.execute(self, entry_point, input_data))
-				.map_err(|e| ExecError { error: e.error, origin: ErrorOrigin::Callee })?;
+				.map_err(|e| {
+					<Tracer as Tracing<T>>::exit_child_span_with_error(
+						self.tracer,
+						e.error,
+						&top_frame_mut!(self).nested_gas,
+					);
+					ExecError { error: e.error, origin: ErrorOrigin::Callee }
+				})?;
 
 			<Tracer as Tracing<T>>::exit_child_span(
 				self.tracer,

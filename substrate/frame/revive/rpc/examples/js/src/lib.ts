@@ -126,17 +126,3 @@ export function assert(condition: any, message: string): asserts condition {
 		throw new Error(message)
 	}
 }
-
-const debugClient = createClient({
-	chain: mainnet,
-	transport: http(),
-}).extend((client) => ({
-	// ...
-	async traceCall(args: CallParameters) {
-		return client.request({
-			method: 'debug_traceCall',
-			params: [formatTransactionRequest(args), 'latest', {}],
-		})
-	},
-	// ...
-}))

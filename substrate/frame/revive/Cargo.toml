@@ -38,7 +38,7 @@ frame-benchmarking = { optional = true, workspace = true }
 frame-support = { workspace = true }
 frame-system = { workspace = true }
 pallet-revive-fixtures = { workspace = true, optional = true }
-pallet-revive-uapi = { workspace = true, features = ["scale"] }
+pallet-revive-uapi = { workspace = true, features = ["scale", "serde"] }
 pallet-revive-proc-macro = { workspace = true }
 pallet-transaction-payment = { workspace = true }
 sp-api = { workspace = true }

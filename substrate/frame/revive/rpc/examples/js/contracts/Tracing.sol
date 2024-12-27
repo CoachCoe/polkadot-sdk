@@ -11,7 +11,10 @@ contract TracingCaller {
 
     function start(uint256 counter) external {
         if (counter == 0) {
-            return;
+			uint256 a = 1;
+			uint256 b = 0;
+			uint256 c = a / b;
+			return;
         }
 
         TracingCallee(callee).consumeGas();

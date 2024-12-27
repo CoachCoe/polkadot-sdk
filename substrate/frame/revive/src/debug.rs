@@ -21,7 +21,7 @@ pub use crate::{
 	primitives::ExecReturnValue,
 	BalanceOf,
 };
-use crate::{Config, GasMeter, LOG_TARGET};
+use crate::{Config, DispatchError, GasMeter, LOG_TARGET};
 use alloc::vec::Vec;
 use sp_core::{H160, U256};
 
@@ -53,6 +53,9 @@ pub trait Tracing<T: Config>: Default {
 
 	/// Called after a contract call is executed
 	fn exit_child_span(&mut self, output: &ExecReturnValue, gas_meter: &GasMeter<T>);
+
+	/// Called when a contract call terminates with an error
+	fn exit_child_span_with_error(&mut self, error: DispatchError, gas_meter: &GasMeter<T>);
 }
 
 impl Tracer {
@@ -111,7 +114,6 @@ where
 		}
 	}
 
-	//fn after_call(&mut self, output: &ExecReturnValue);
 	fn exit_child_span(&mut self, output: &ExecReturnValue, gas_meter: &GasMeter<T>) {
 		match self {
 			Tracer::CallTracer(tracer) => {
@@ -119,6 +121,17 @@ where
 			},
 			Tracer::Disabled => {
 				log::trace!(target: LOG_TARGET, "call result {output:?}")
+			},
+		}
+	}
+
+	fn exit_child_span_with_error(&mut self, error: DispatchError, gas_meter: &GasMeter<T>) {
+		match self {
+			Tracer::CallTracer(tracer) => {
+				<CallTracer as Tracing<T>>::exit_child_span_with_error(tracer, error, gas_meter);
+			},
+			Tracer::Disabled => {
+				log::trace!(target: LOG_TARGET, "call failed {error:?}")
 			},
 		}
 	}
@@ -171,8 +184,21 @@ where
 		// Set the output of the current trace
 		let current_index = self.current_stack.pop().unwrap();
 		let trace = &mut self.traces[current_index];
-		trace.output = output.data.clone();
+		trace.output = output.clone();
 		trace.gas_used = gas_meter.gas_consumed();
+
+		//  move the current trace into its parent
+		if let Some(parent_index) = self.current_stack.last() {
+			let child_trace = self.traces.remove(current_index);
+			self.traces[*parent_index].calls.push(child_trace);
+		}
+	}
+	fn exit_child_span_with_error(&mut self, error: DispatchError, gas_meter: &GasMeter<T>) {
+		// Set the output of the current trace
+		let current_index = self.current_stack.pop().unwrap();
+		let trace = &mut self.traces[current_index];
+		trace.gas_used = gas_meter.gas_consumed();
+		trace.error = Some(format!("{error:?}"));
 
 		//  move the current trace into its parent
 		if let Some(parent_index) = self.current_stack.last() {
