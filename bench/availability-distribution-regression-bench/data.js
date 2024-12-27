@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1734952811133,
+  "lastUpdate": 1735307081508,
   "repoUrl": "https://github.com/paritytech/polkadot-sdk",
   "entries": {
     "availability-distribution-regression-bench": [
@@ -44683,6 +44683,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "availability-store",
             "value": 0.17956165633999993,
+            "unit": "seconds"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "git@kchr.de",
+            "name": "Bastian Köcher",
+            "username": "bkchr"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b7afe48ed0bfef30836e7ca6359c2d8bb594d16e",
+          "message": "paras-registrar: Improve error reporting (#6989)\n\nThis pr improves the error reporting by paras registrar when an owner\nwants to access a locked parachain.\n\nCloses: https://github.com/paritytech/polkadot-sdk/issues/6745\n\n---------\n\nCo-authored-by: command-bot <>",
+          "timestamp": "2024-12-27T12:43:13Z",
+          "tree_id": "ed3000dec480402eb64af67532fc96699207cf68",
+          "url": "https://github.com/paritytech/polkadot-sdk/commit/b7afe48ed0bfef30836e7ca6359c2d8bb594d16e"
+        },
+        "date": 1735307064365,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Sent to peers",
+            "value": 18481.666666666653,
+            "unit": "KiB"
+          },
+          {
+            "name": "Received from peers",
+            "value": 433.3333333333332,
+            "unit": "KiB"
+          },
+          {
+            "name": "availability-distribution",
+            "value": 0.016333537433333333,
+            "unit": "seconds"
+          },
+          {
+            "name": "bitfield-distribution",
+            "value": 0.024604362626666664,
+            "unit": "seconds"
+          },
+          {
+            "name": "test-environment",
+            "value": 0.008519611846666756,
+            "unit": "seconds"
+          },
+          {
+            "name": "availability-store",
+            "value": 0.1793146245666666,
             "unit": "seconds"
           }
         ]
